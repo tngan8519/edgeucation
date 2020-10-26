@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import FormSearch from "./FormSearch";
 import Result from "./Result";
 import axios from "axios";
@@ -12,6 +11,27 @@ const Select = () => {
   const [data, setData] = useState([]);
   const [start, setStart] = useState(false);
   const [search, setSearch] = useState({ zipcode: "", major: "", cost: 50000 });
+  const [listMajor, setListMajor] = useState([]);
+
+  useEffect(() => {
+    async function getList() {
+      axios
+        .get(
+          `https://api.data.gov/ed/collegescorecard/v1/schools.json?fields=id,school.name,school.state,location.lat,location.lon,2018.cost.tuition,2018.academics.program_percentage&api_key=${apikey}`
+        )
+        .then((response) => {
+          const results = [];
+          for (let key in response.data.results[0]) {
+            if (key.indexOf("2018.academics.program_percentage.") !== -1) {
+              results.push(key.slice(34));
+            }
+          }
+          setListMajor(results);
+        });
+    }
+    getList();
+  }, []);
+
   const handleChange = (e) => {
     setSearch({ ...search, [e.target.name]: e.target.value });
   };
@@ -109,6 +129,7 @@ const Select = () => {
         search={search}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
+        listMajor={listMajor}
       />
 
       {start && <Result data={data} />}

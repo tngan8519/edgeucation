@@ -1,7 +1,6 @@
 import React from "react";
-import listMajor from "../listMajor";
 
-const FormSearch = ({ search, handleChange, handleSubmit }) => {
+const FormSearch = ({ search, handleChange, handleSubmit, listMajor }) => {
   return (
     <form>
       <div>
